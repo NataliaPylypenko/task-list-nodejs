@@ -1,5 +1,7 @@
 import Router from 'express'
-import {tasks} from "../db/tasks";
+import {tasks, STATUS} from "../db/db";
+import {getRandomId} from "../helpers/functions";
+import moment from "moment";
 
 const router = Router()
 
@@ -29,6 +31,19 @@ router.delete('/tasks/:id', ((req, res, next) => {
     tasks.splice(idx, 1)
 
     res.status(204).send('No content')
+}))
+
+router.post('/tasks', ((req, res, next) => {
+    const newTask = {
+        ...req.body,
+        id: getRandomId(),
+        created: moment().format('MMMM DD, YYYY'),
+        status: STATUS.ACTIVE
+    }
+
+    tasks.push(newTask)
+
+    res.status(201).json(newTask)
 }))
 
 export default router

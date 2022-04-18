@@ -15,7 +15,8 @@
   "author": "Natalia Pylypenko",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "moment": "^2.29.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",

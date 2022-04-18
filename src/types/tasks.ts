@@ -7,3 +7,8 @@ export interface TaskInterface {
     category: string,
     status: string
 }
+
+export type statusType = {
+    ACTIVE: string,
+    ARCHIVE: string,
+}

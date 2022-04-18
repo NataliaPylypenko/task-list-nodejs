@@ -1,4 +1,4 @@
-import {TaskInterface} from "../types/tasks";
+import {statusType, TaskInterface} from "../types/tasks";
 
 export const tasks:TaskInterface[] = [
     {
@@ -58,3 +58,8 @@ export const tasks:TaskInterface[] = [
         status: "active"
     }
 ]
+
+export const STATUS: statusType = {
+    ACTIVE: 'active',
+    ARCHIVE: 'archive'
+}
