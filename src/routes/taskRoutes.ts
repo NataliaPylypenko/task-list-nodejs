@@ -3,6 +3,7 @@ import {tasks, STATUS, CATEGORIES} from "../db/db";
 import {getRandomId} from "../helpers/functions";
 import moment from "moment";
 import {TaskInterfaceSummary} from "../types/tasks";
+import {object, string} from "yup";
 
 const router = Router()
 
@@ -26,11 +27,10 @@ router.get('/tasks/:id', ((req, res, next) => {
 
     const idx = tasks.findIndex(task => task.id === id);
 
-    if(idx === -1) res.status(404).send('Task not found')
+    if (idx === -1) res.status(404).send('Task not found')
 
     res.json(tasks[idx])
 }))
-
 
 
 router.delete('/tasks/:id', ((req, res, next) => {
@@ -38,36 +38,64 @@ router.delete('/tasks/:id', ((req, res, next) => {
 
     const idx = tasks.findIndex(task => task.id === id);
 
-    if(idx === -1) res.status(404).send('Task not found')
+    if (idx === -1) res.status(404).send('Task not found')
 
     tasks.splice(idx, 1)
 
     res.status(204).send('No content')
 }))
 
-router.post('/tasks', ((req, res, next) => {
-    const newTask = {
-        ...req.body,
-        id: getRandomId(),
-        created: moment().format('MMMM DD, YYYY'),
-        status: STATUS.ACTIVE
+router.post('/tasks', (async (req, res, next) => {
+    try {
+        const taskSchema = object({
+            name: string().required(),
+            content: string().required(),
+            category: string().required().oneOf(CATEGORIES),
+        });
+
+        await taskSchema.validate(req.body);
+
+        const newTask = {
+            ...req.body,
+            id: getRandomId(),
+            created: moment().format('MMMM DD, YYYY'),
+            status: STATUS.ACTIVE
+        }
+
+        tasks.push(newTask)
+        res.status(201).json(newTask)
+    } catch (e) {
+        res.status(422).send(e.message)
     }
 
-    tasks.push(newTask)
-    res.status(201).json(newTask)
 }))
 
-router.patch('/tasks/:id', ((req, res, next) => {
-    const id = req.params.id
+router.patch('/tasks/:id', (async (req, res, next) => {
+    try {
+        const taskEditSchema = object({
+            name: string().required(),
+            content: string().required(),
+            category: string().required().oneOf(CATEGORIES),
+            status: string().required().oneOf([STATUS.ACTIVE, STATUS.ARCHIVE]),
+        });
 
-    const idx = tasks.findIndex(task => task.id === id);
-    if(idx === -1) res.status(404).send('Task not found')
+        await taskEditSchema.validate(req.body);
 
-    tasks[idx] = {...tasks[idx], ...req.body};
+        const id = req.params.id
 
-    res.json(tasks[idx])
+        const idx = tasks.findIndex(task => task.id === id);
+        if (idx === -1) res.status(404).send('Task not found')
+
+        tasks[idx] = {...tasks[idx], ...req.body};
+
+        res.json(tasks[idx])
+
+
+    }catch (e){
+        res.status(422).send(e.message)
+    }
+
 }))
-
 
 
 export default router
