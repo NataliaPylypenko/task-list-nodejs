@@ -12,3 +12,9 @@ export type statusType = {
     ACTIVE: string,
     ARCHIVE: string,
 }
+
+export interface TaskInterfaceSummary {
+    category: string,
+    active: number,
+    archived: number
+}

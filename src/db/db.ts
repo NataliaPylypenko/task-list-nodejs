@@ -59,6 +59,8 @@ export const tasks:TaskInterface[] = [
     }
 ]
 
+export const CATEGORIES: string[] = ['Task', 'Random Thought', 'Idea', 'Quote'];
+
 export const STATUS: statusType = {
     ACTIVE: 'active',
     ARCHIVE: 'archive'
